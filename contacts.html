@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Контакты | Культурная платформа</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: #150B0A;
+            font-family: 'Inter', sans-serif;
+            color: #F5EFE6;
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        #stars-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .menu {
+            position: fixed;
+            top: 12px;
+            right: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            list-style: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 20px;
+            font-weight: 500;
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            z-index: 100;
+        }
+        .menu li {
+            cursor: pointer;
+            transition: color 0.2s;
+            white-space: nowrap;
+        }
+        .menu li a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .menu li:hover { color: #FFD996; }
+        
+        .page-container {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 30px;
+            gap: 40px;
+            min-height: 0;
+            height: calc(100vh - 140px);
+        }
+        
+        .contacts-content {
+            width: 600px;
+            flex-shrink: 0;
+            margin-left: 40px;
+        }
+        
+        .right-images {
+            position: relative;
+            width: 450px;
+            height: 100%;
+            flex-shrink: 0;
+        }
+        .right-img-back {
+            position: absolute;
+            right: 0;
+            top: 85px;
+            max-width: 320px;
+            opacity: 0.85;
+            z-index: 1;
+        }
+        .right-img-front {
+            position: absolute;
+            left: -40px;
+            top: 420px;
+            max-width: 280px;
+            opacity: 0.9;
+            z-index: 2;
+        }
+        .right-img-back img, .right-img-front img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .page-title {
+            font-family: 'Satyr SP', 'Satyr SP 230', 'Georgia', 'Times New Roman', serif;
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #F9E0A0, #E0B07F);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+            margin-top: 20px;
+        }
+        .title-stripe {
+            width: 280px;
+            height: 2px;
+            background: #DDB580;
+            border: none;
+            margin-bottom: 16px;
+        }
+        .subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.25;
+            color: #F2E0C9;
+            margin-bottom: 28px;
+        }
+        
+        .description {
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            line-height: 1.4;
+            color: #F2E6D8;
+            margin-bottom: 20px;
+            max-width: 600px;
+        }
+        
+        .contact-section {
+            margin-bottom: 16px;
+        }
+        .contact-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            color: #FFE4B5;
+            margin-bottom: 6px;
+        }
+        .contact-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            line-height: 1.4;
+            color: #F2E6D8;
+        }
+        .contact-value small {
+            font-size: 13px;
+            color: #C6A87F;
+            display: block;
+            margin-top: 3px;
+        }
+        
+        .social-section {
+            margin-top: 24px;
+            margin-bottom: 28px;
+        }
+        .social-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            color: #FFE4B5;
+            margin-bottom: 16px;
+        }
+        .social-grid {
+            display: flex;
+            gap: 35px;
+            flex-wrap: wrap;
+        }
+        .social-item {
+            text-align: left;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .social-item:hover {
+            transform: translateY(-5px);
+        }
+        .social-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 1px solid #DDB580;
+            transition: border-color 0.2s;
+            display: block;
+        }
+        .social-item:hover .social-img {
+            border-color: #FFDA9E;
+        }
+        .social-name {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: #FCE2B4;
+            margin-top: 8px;
+            text-align: left;
+        }
+        
+        .btn-back {
+            display: inline-block;
+            width: fit-content;
+            margin-top: 0;
+            margin-bottom: 24px;
+            background: transparent;
+            border: 2px solid #DDB580;
+            border-radius: 10px;
+            padding: 8px 32px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #FCE2B4;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-decoration: none;
+        }
+        .btn-back:hover {
+            background: rgba(221, 181, 128, 0.1);
+            border-color: #FFDA9E;
+        }
+        
+        .site-footer {
+            position: relative;
+            z-index: 10;
+            background: rgba(21, 11, 10, 0.85);
+            backdrop-filter: blur(6px);
+            border-top: 1px solid #3d2b1f;
+            padding: 20px 40px 18px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #c6b09a;
+            flex-shrink: 0;
+            margin-top: auto;
+            gap: 16px 30px;
+        }
+        .footer-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px 28px;
+            list-style: none;
+        }
+        .footer-nav a {
+            color: #dacbbc;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-weight: 400;
+        }
+        .footer-nav a:hover {
+            color: #FFD996;
+        }
+        .footer-copy {
+            font-size: 13px;
+            color: #8a7a68;
+            letter-spacing: 0.3px;
+        }
+        .footer-socials {
+            display: flex;
+            gap: 14px;
+        }
+        .footer-socials a {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: #2d1e16;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #dacbbc;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .footer-socials a:hover {
+            background: #4d3424;
+            color: #FFD996;
+        }
+        
+        @media (max-width: 1200px) {
+            .right-images { width: 350px; }
+            .right-img-back { max-width: 250px; top: 70px; }
+            .right-img-front { max-width: 220px; left: -20px; top: 380px; }
+        }
+        @media (max-width: 1000px) {
+            .page-container { flex-direction: column; align-items: flex-start; overflow-y: auto; height: auto; min-height: calc(100vh - 200px); padding: 80px 20px 20px; }
+            body { overflow-y: auto; height: auto; }
+            .contacts-content { width: 100%; margin-left: 0; }
+            .right-images { display: none; }
+            .menu { right: 20px; font-size: 16px; gap: 1.2rem; }
+            .page-title { font-size: 8vw; white-space: normal; }
+            .site-footer { flex-direction: column; align-items: flex-start; padding: 16px 20px; gap: 10px; }
+            .footer-nav { gap: 12px 20px; }
+        }
+        @media (max-width: 700px) {
+            .menu { position: relative; top: 0; right: auto; justify-content: flex-end; margin-bottom: 0; background: rgba(0,0,0,0.3); border-radius: 40px; padding: 6px 16px; }
+            .page-container { padding-top: 20px; }
+        }
+        @font-face {
+            font-family: 'Satyr SP';
+            src: url('font/SatyrSP.otf') format('opentype');
+            font-weight: 800;
+            font-style: normal;
+            font-display: swap;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="stars-canvas"></canvas>
+
+    <ul class="menu">
+        <li><a href="index.html">О нас</a></li>
+        <li><a href="services.html">Услуги</a></li>
+        <li><a href="sculptor.html">Скульптор</a></li>
+        <li><a href="reviews.html">Отзывы</a></li>
+        <li><a href="download.html">Скачать</a></li>
+        <li>Контакты</li>
+    </ul>
+
+    <div class="page-container">
+        <div class="contacts-content">
+            <h1 class="page-title">Контакты</h1>
+            <div class="title-stripe"></div>
+            <div class="subtitle">Будь на связи</div>
+            
+            <div class="description">
+                Физически нас нет, но духовно — мы в каждом музее мира.
+            </div>
+            
+            <div class="contact-section">
+                <div class="contact-label">Телефон:</div>
+                <div class="contact-value">
+                    +39 (055) 246
+                    <small>Можно звонить только если вы уверены, что Мона Лиза улыбается. В остальных случаях — пишите.</small>
+                </div>
+            </div>
+            
+            <div class="contact-section">
+                <div class="contact-label">Email:</div>
+                <div class="contact-value">
+                    info@cult-renaissance.ru
+                    <small>Отвечаем быстрее, чем Микеланджело отбивал скульптуры.</small>
+                </div>
+            </div>
+            
+            <div class="social-section">
+                <div class="social-label">Мы в соцсетях:</div>
+                <div class="social-grid">
+                    <div class="social-item" onclick="window.open('https://vk.com', '_blank')">
+                        <img class="social-img" src="images/вк.jfif" alt="Вконтакте" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%233d2b1f%22%2F%3E%3C%2Fsvg%3E'">
+                        <div class="social-name">Вконтакте</div>
+                    </div>
+                    <div class="social-item" onclick="window.open('https://youtube.com', '_blank')">
+                        <img class="social-img" src="images/ютуб.jfif" alt="Ютуб" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%233d2b1f%22%2F%3E%3C%2Fsvg%3E'">
+                        <div class="social-name">Ютуб</div>
+                    </div>
+                    <div class="social-item" onclick="window.open('https://yandex.ru', '_blank')">
+                        <img class="social-img" src="images/яндекс.jfif" alt="Яндекс" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%233d2b1f%22%2F%3E%3C%2Fsvg%3E'">
+                        <div class="social-name">Яндекс</div>
+                    </div>
+                </div>
+            </div>
+            
+            <a href="index.html" class="btn-back">← На главную</a>
+        </div>
+        
+        <div class="right-images">
+            <div class="right-img-back">
+                <img src="images/22.png" alt="декор задний" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20320%20400%22%3E%3Crect%20width%3D%22320%22%20height%3D%22400%22%20fill%3D%22%233d2b1f%22%2F%3E%3C%2Fsvg%3E'">
+            </div>
+            <div class="right-img-front">
+                <img src="images/22.png" alt="декор передний" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20280%20360%22%3E%3Crect%20width%3D%22280%22%20height%3D%22360%22%20fill%3D%22%234d3424%22%2F%3E%3C%2Fsvg%3E'">
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <ul class="footer-nav">
+            <li><a href="download.html">Скачать</a></li>
+            <li><a href="contacts.html">Контакты</a></li>
+        </ul>
+        <div class="footer-socials">
+            <a href="https://vk.com" target="_blank" title="ВК">В</a>
+            <a href="https://youtube.com" target="_blank" title="YouTube">Y</a>
+            <a href="https://yandex.ru" target="_blank" title="Яндекс">Я</a>
+        </div>
+        <div class="footer-copy">© 2026 Культурная платформа</div>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('stars-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        const starCount = 200;
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < starCount; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+                    radius: Math.random() * 2 + 0.8, alpha: Math.random() * 0.5 + 0.2,
+                    speedX: (Math.random() - 0.5) * 0.4, speedY: (Math.random() - 0.5) * 0.2 + 0.15,
+                    twinkle: Math.random() * 0.05 + 0.01,
+                });
+            }
+        }
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; initStars(); }
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#150B0A';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            for (const s of stars) {
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                const twinkle = 0.6 + 0.4 * Math.sin(Date.now() * 0.002 * s.twinkle * 10);
+                const opacity = Math.min(s.alpha * twinkle, 0.9);
+                ctx.fillStyle = `rgba(255, 235, 190, ${opacity})`;
+                ctx.fill();
+            }
+        }
+        function updateStars() {
+            for (const s of stars) {
+                s.x += s.speedX; s.y += s.speedY;
+                if (s.x < -20) s.x = canvas.width + 20;
+                if (s.x > canvas.width + 20) s.x = -20;
+                if (s.y < -20) s.y = canvas.height + 20;
+                if (s.y > canvas.height + 20) s.y = -20;
+                s.radius = Math.max(0.7, Math.min(2.4, s.radius + (Math.random() - 0.5) * 0.03));
+            }
+        }
+        function animateStars() { updateStars(); drawStars(); requestAnimationFrame(animateStars); }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        animateStars();
+    </script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+(function() {
+    'use strict';
+
+    // ===== 1. Звёздный фон =====
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    const starCount = 200;
+    let width, height;
+
+    function initStars(w, h) {
+        stars = [];
+        for (let i = 0; i < starCount; i++) {
+            stars.push({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                radius: Math.random() * 2 + 0.8,
+                alpha: Math.random() * 0.5 + 0.2,
+                speedX: (Math.random() - 0.5) * 0.4,
+                speedY: (Math.random() - 0.5) * 0.2 + 0.15,
+                twinkle: Math.random() * 0.05 + 0.01,
+            });
+        }
+    }
+
+    function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        initStars(width, height);
+        drawStars();
+    }
+
+    function drawStars() {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = '#150B0A';
+        ctx.fillRect(0, 0, width, height);
+
+        for (const s of stars) {
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+            const twinkle = 0.6 + 0.4 * Math.sin(Date.now() * 0.002 * s.twinkle * 10);
+            const opacity = Math.min(s.alpha * twinkle, 0.9);
+            ctx.fillStyle = `rgba(255, 235, 190, ${opacity})`;
+            ctx.fill();
+        }
+        requestAnimationFrame(drawStars);
+    }
+
+    function updateStars() {
+        for (const s of stars) {
+            s.x += s.speedX;
+            s.y += s.speedY;
+            if (s.x < -20) s.x = width + 20;
+            if (s.x > width + 20) s.x = -20;
+            if (s.y < -20) s.y = height + 20;
+            if (s.y > height + 20) s.y = -20;
+            s.radius = Math.max(0.7, Math.min(2.4, s.radius + (Math.random() - 0.5) * 0.03));
+        }
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    setInterval(updateStars, 50);
+
+    // ===== 2. Пагинация (точки-индикаторы) =====
+    const dots = document.querySelectorAll('.dot');
+    if (dots.length) {
+        dots.forEach((dot) => {
+            dot.addEventListener('click', function() {
+                dots.forEach(d => d.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    }
+
+    // ===== 3. Обработка формы обратной связи =====
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('contactName').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const message = document.getElementById('contactMessage').value.trim();
+
+            if (!name || !email || !message) {
+                alert('Пожалуйста, заполните все обязательные поля (Имя, Email, Сообщение).');
+                return;
+            }
+
+            if (!email.includes('@') || !email.includes('.')) {
+                alert('Пожалуйста, введите корректный email.');
+                return;
+            }
+
+            alert(`Спасибо, ${name}!\nВаше сообщение отправлено.\nМы свяжемся с вами по email: ${email}`);
+            contactForm.reset();
+        });
+    }
+
+    // ===== 4. Дополнительно: активный пункт меню =====
+    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.menu a').forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+            link.classList.add('active');
+        }
+    });
+})();

@@ -1,0 +1,507 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    background-color: #150B0A;
+    font-family: 'Inter', sans-serif;
+    color: #F5EFE6;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px 0;
+}
+
+/* ===== Шрифт Satyr (для заголовков) ===== */
+@font-face {
+    font-family: 'Satyr SP';
+    src: url('../font/SatyrSP.otf') format('opentype');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ===== Звёздный фон (canvas) ===== */
+#stars-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+    z-index: 0;
+    background-color: #150B0A;
+}
+
+/* ===== Фоновое изображение храма ===== */
+.temple-bg {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    height: auto;
+    max-height: 85vh;
+    max-width: calc(100vw - 600px);
+    object-fit: contain;
+    object-position: bottom center;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 1;
+}
+
+/* Адаптив для храма */
+@media (min-width: 1400px) {
+    .temple-bg {
+        max-width: calc(100vw - 500px);
+        max-height: 88vh;
+    }
+}
+@media (min-width: 1200px) and (max-width: 1399px) {
+    .temple-bg {
+        max-width: calc(100vw - 450px);
+        max-height: 85vh;
+    }
+}
+@media (min-width: 1000px) and (max-width: 1199px) {
+    .temple-bg {
+        max-width: calc(100vw - 350px);
+    }
+}
+@media (min-width: 800px) and (max-width: 999px) {
+    .temple-bg {
+        max-width: calc(100vw - 250px);
+    }
+}
+@media (max-width: 799px) {
+    .temple-bg {
+        max-width: 85vw;
+        max-height: 70vh;
+    }
+}
+
+/* ===== Верхнее меню ===== */
+.menu {
+    position: fixed;
+    top: 12px;
+    right: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    list-style: none;
+    font-size: 20px;
+    font-weight: 500;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    z-index: 100;
+}
+
+.menu li {
+    cursor: pointer;
+    transition: color 0.2s;
+    white-space: nowrap;
+}
+
+.menu li a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.menu li:hover,
+.menu li a.active {
+    color: #FFD996;
+}
+
+/* ===== Основной контент (контакты) ===== */
+.contacts-hero {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    width: 100%;
+    margin: 100px auto 40px;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.contacts-hero h1 {
+    font-family: 'Satyr SP', serif;
+    font-size: 3.2rem;
+    font-weight: 800;
+    color: #FCE2B4;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+.contacts-hero>p {
+    font-size: 1.2rem;
+    color: #c6b09a;
+    margin-bottom: 40px;
+}
+
+/* ===== Сетка: информация + форма ===== */
+.contacts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 48px;
+    align-items: start;
+    text-align: left;
+    background: rgba(21, 11, 10, 0.75);
+    backdrop-filter: blur(6px);
+    border-radius: 16px;
+    padding: 40px 36px;
+    border: 1px solid #3d2b1f;
+}
+
+/* — Блок с контактной информацией — */
+.contacts-info {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.info-item .icon {
+    font-size: 1.6rem;
+    line-height: 1.4;
+    min-width: 40px;
+}
+
+.info-item strong {
+    display: block;
+    font-weight: 600;
+    color: #FCE2B4;
+    margin-bottom: 4px;
+}
+
+.info-item a,
+.info-item address {
+    color: #dacbbc;
+    text-decoration: none;
+    font-style: normal;
+    transition: color 0.2s;
+}
+
+.info-item a:hover {
+    color: #FFD996;
+}
+
+/* Социальные иконки */
+.social-icons {
+    display: flex;
+    gap: 14px;
+    margin-top: 6px;
+}
+
+.social-icons a {
+    display: inline-block;
+    width: 34px;
+    height: 34px;
+    background: #2d1e16;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 34px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #dacbbc;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.social-icons a:hover {
+    background: #4d3424;
+    color: #FFD996;
+}
+
+/* — Форма обратной связи — */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.contact-form h2 {
+    font-family: 'Satyr SP', serif;
+    font-size: 1.8rem;
+    color: #FCE2B4;
+    margin-bottom: 6px;
+}
+
+.contact-form label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #dacbbc;
+}
+
+.contact-form input,
+.contact-form textarea {
+    background: #3A2A20;
+    border: 1px solid #DDB580;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: #F5EFE6;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    width: 100%;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    border-color: #FFDA9E;
+    background: #4A3A2E;
+}
+
+.contact-form textarea {
+    resize: vertical;
+}
+
+.submit-btn {
+    background: #DDB580;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2A1A16;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.15s;
+    margin-top: 8px;
+}
+
+.submit-btn:hover {
+    background: #FFDA9E;
+    transform: translateY(-2px);
+}
+
+/* ===== Пагинация (навигация между страницами) ===== */
+.page-container {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    width: 100%;
+    margin: 40px auto 20px;
+    padding: 0 20px;
+}
+
+.services-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.btn-prev {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 2px solid #DDB580;
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #FCE2B4;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+    min-width: 48px;
+}
+
+.btn-prev:hover {
+    background: rgba(221, 181, 128, 0.1);
+    border-color: #FFDA9E;
+}
+
+.btn-next {
+    display: inline-block;
+    background: transparent;
+    border: 2px solid #DDB580;
+    border-radius: 10px;
+    padding: 8px 32px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #FCE2B4;
+    cursor: default;
+    text-decoration: none;
+}
+
+.pagination-dots {
+    display: flex;
+    justify-content: flex-start;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background-color: #8B6F50;
+    border-radius: 50%;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.dot.active {
+    background-color: #F5CD94;
+    transform: scale(1.2);
+}
+
+/* ===== Подвал ===== */
+.site-footer {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 1200px;
+    background: rgba(21, 11, 10, 0.85);
+    backdrop-filter: blur(6px);
+    border-top: 1px solid #3d2b1f;
+    padding: 20px 40px 18px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #c6b09a;
+    gap: 16px 30px;
+    margin-top: 40px;
+    border-radius: 12px 12px 0 0;
+}
+
+.footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px 28px;
+    list-style: none;
+}
+
+.footer-nav a {
+    color: #dacbbc;
+    text-decoration: none;
+    transition: color 0.2s;
+    font-weight: 400;
+}
+
+.footer-nav a:hover {
+    color: #FFD996;
+}
+
+.footer-socials {
+    display: flex;
+    gap: 14px;
+}
+
+.footer-socials a {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    background: #2d1e16;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 28px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #dacbbc;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.footer-socials a:hover {
+    background: #4d3424;
+    color: #FFD996;
+}
+
+.footer-copy {
+    font-size: 13px;
+    color: #8a7a68;
+    letter-spacing: 0.3px;
+}
+
+/* ===== Адаптивность ===== */
+@media (max-width: 1100px) {
+    .contacts-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 28px 24px;
+    }
+
+    .contacts-hero {
+        margin-top: 80px;
+    }
+
+    .contacts-hero h1 {
+        font-size: 2.6rem;
+    }
+
+    .menu {
+        position: relative;
+        top: 0;
+        right: auto;
+        justify-content: flex-end;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 40px;
+        padding: 6px 16px;
+        margin: 12px 0 20px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 700px) {
+    .contacts-hero h1 {
+        font-size: 2rem;
+    }
+
+    .contacts-grid {
+        padding: 20px 16px;
+        gap: 24px;
+    }
+
+    .info-item {
+        gap: 12px;
+    }
+
+    .site-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 20px;
+        gap: 10px;
+    }
+
+    .footer-nav {
+        gap: 12px 20px;
+    }
+
+    .nav-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .pagination-dots {
+        justify-content: center;
+    }
+}

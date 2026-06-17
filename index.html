@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Культура | Платформа нового поколения</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            background-color: #150B0A;
+            font-family: 'Inter', sans-serif;
+            color: #F5EFE6;
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #stars-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .menu {
+            position: fixed;
+            top: 12px;
+            right: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            list-style: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 20px;
+            font-weight: 500;
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            z-index: 100;
+        }
+        .menu li {
+            cursor: pointer;
+            transition: color 0.2s;
+            white-space: nowrap;
+        }
+        .menu li a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .menu li:hover { color: #FFD996; }
+        
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pages-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .page {
+            display: none;
+            animation: fadeUp 0.5s ease-out;
+            width: 100%;
+        }
+        .page.active-page { display: block; }
+        
+        .left-aligned-container {
+            width: 710px;
+            margin-left: 360px;
+            cursor: pointer;
+        }
+        .cult-title {
+            font-family: 'Satyr SP', 'Satyr SP 230', 'Georgia', 'Times New Roman', serif;
+            font-size: 180px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #F9E0A0, #E0B07F);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            white-space: nowrap;
+        }
+        .title-stripe {
+            margin-top: 4px;
+            margin-bottom: 4px;
+            width: 280px;
+            height: 2px;
+            background: #DDB580;
+            border: none;
+        }
+        .sub-quote-left {
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.25;
+            color: #F2E0C9;
+            white-space: pre-line;
+        }
+        .listen-divider {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 32px;
+            margin-bottom: 8px;
+            width: 325px;
+            max-width: 100%;
+        }
+        .listen-divider hr {
+            flex-grow: 1;
+            height: 2px;
+            background: #C6A87F;
+            border: none;
+        }
+        .listen-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            color: #FFE4B5;
+            padding: 0 6px;
+            white-space: nowrap;
+        }
+        .cards-container {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 20px;
+            margin-top: 8px;
+            margin-bottom: 24px;
+            width: 325px;
+            max-width: 100%;
+        }
+        .culture-card {
+            background: transparent;
+            border: 2px solid #DDB580;
+            border-radius: 12px;
+            padding: 8px;
+            width: 95px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, border-color 0.2s;
+            cursor: pointer;
+        }
+        .culture-card:hover {
+            transform: translateY(-4px);
+            border-color: #F3CD8A;
+        }
+        .card-img {
+            width: 80px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-img img { width: 100%; height: 100%; object-fit: cover; }
+        .quote-block {
+            background: #E2D5C2;
+            border-radius: 10px;
+            padding: 16px;
+            max-width: 480px;
+            margin-bottom: 24px;
+        }
+        .quote-inner {
+            border: 2px solid #1F110F;
+            border-radius: 8px;
+            padding: 16px 20px;
+            color: #1F110F;
+        }
+        .quote-text {
+            font-size: 18px;
+            line-height: 1.4;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+        .quote-stripe {
+            width: 60px;
+            height: 2px;
+            background: #1F110F;
+            margin: 16px 0 12px;
+            opacity: 0.4;
+        }
+        .quote-author {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .platform-description {
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            line-height: 1.4;
+            margin-bottom: 24px;
+            color: #F2E6D8;
+            max-width: 600px;
+        }
+        .btn-next {
+            display: inline-block;
+            width: fit-content;
+            margin-bottom: 24px;
+            background: transparent;
+            border: 2px solid #DDB580;
+            border-radius: 10px;
+            padding: 8px 32px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #FCE2B4;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-decoration: none;
+        }
+        .btn-next:hover {
+            background: rgba(221, 181, 128, 0.1);
+            border-color: #FFDA9E;
+        }
+        .pagination-dots {
+            display: flex;
+            justify-content: flex-start;
+            gap: 12px;
+            margin-bottom: 0;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #8B6F50;
+            border-radius: 50%;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active {
+            background-color: #F5CD94;
+            transform: scale(1.2);
+        }
+        .side-image-left {
+            position: fixed;
+            left: 1%;
+            top: 50%;
+            transform: translateY(-40%);
+            max-width: 320px;
+            z-index: 3;
+            opacity: 0.85;
+            pointer-events: none;
+        }
+        .side-image-right {
+            position: fixed;
+            right: 1%;
+            top: 55%;
+            transform: translateY(-45%);
+            max-width: 700px;
+            z-index: 3;
+            opacity: 0.9;
+            pointer-events: none;
+        }
+        .side-image-left img, .side-image-right img {
+            width: 100%;
+            height: auto;
+        }
+
+        .site-footer {
+            position: relative;
+            z-index: 10;
+            background: rgba(21, 11, 10, 0.85);
+            backdrop-filter: blur(6px);
+            border-top: 1px solid #3d2b1f;
+            padding: 20px 40px 18px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #c6b09a;
+            flex-shrink: 0;
+            margin-top: auto;
+            gap: 16px 30px;
+        }
+        .footer-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px 28px;
+            list-style: none;
+        }
+        .footer-nav a {
+            color: #dacbbc;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-weight: 400;
+        }
+        .footer-nav a:hover {
+            color: #FFD996;
+        }
+        .footer-copy {
+            font-size: 13px;
+            color: #8a7a68;
+            letter-spacing: 0.3px;
+        }
+        .footer-socials {
+            display: flex;
+            gap: 14px;
+        }
+        .footer-socials a {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: #2d1e16;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #dacbbc;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .footer-socials a:hover {
+            background: #4d3424;
+            color: #FFD996;
+        }
+
+        @media (max-width: 1400px) {
+            .side-image-left { max-width: 260px; }
+            .side-image-right { max-width: 550px; }
+        }
+        @media (max-width: 1000px) {
+            .left-aligned-container {
+                margin-left: 30px;
+                width: auto;
+            }
+            .menu { right: 20px; font-size: 16px; gap: 1.2rem; }
+            .cult-title { font-size: 14vw; white-space: normal; letter-spacing: 2px; }
+            .side-image-left { max-width: 180px; }
+            .side-image-right { max-width: 380px; }
+            .pages-container { padding: 0 20px; }
+            .site-footer { flex-direction: column; align-items: flex-start; padding: 16px 20px; gap: 10px; }
+            .footer-nav { gap: 12px 20px; }
+        }
+        @media (max-width: 700px) {
+            .left-aligned-container { margin-left: 20px; margin-right: 20px; }
+            .menu { position: relative; top: 0; right: auto; justify-content: flex-end; margin-bottom: 0; background: rgba(0,0,0,0.3); border-radius: 40px; padding: 6px 16px; }
+            body { overflow-y: auto; height: auto; }
+            html { overflow-y: auto; }
+            .main-wrapper { overflow-y: auto; }
+            .pages-container { align-items: flex-start; padding-top: 20px; height: auto; min-height: calc(100vh - 180px); }
+            .side-image-left, .side-image-right { display: none; }
+            .site-footer { flex-direction: column; align-items: flex-start; padding: 16px 20px; gap: 10px; }
+        }
+        @font-face {
+            font-family: 'Satyr SP';
+            src: url('font/SatyrSP.otf') format('opentype');
+            font-weight: 800;
+            font-style: normal;
+            font-display: swap;
+        }
+        .fade-up { animation: fadeUp 0.6s ease-out; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+<canvas id="stars-canvas"></canvas>
+
+<div class="side-image-left">
+    <img src="images/22.png" alt="декор" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20300%22%3E%3Crect%20width%3D%22200%22%20height%3D%22300%22%20fill%3D%22%233d2b1f%22%2F%3E%3C%2Fsvg%3E'">
+</div>
+<div class="side-image-right">
+    <img src="images/1.png" alt="скульптура" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20500%20600%22%3E%3Crect%20width%3D%22500%22%20height%3D%22600%22%20fill%3D%22%234d3424%22%2F%3E%3C%2Fsvg%3E'">
+</div>
+
+<ul class="menu">
+    <li>О нас</li>
+    <li><a href="services.html" style="text-decoration: none; color: inherit;">Услуги</a></li>
+    <li><a href="sculptor.html" style="text-decoration: none; color: inherit;">Скульптор</a></li>
+    <li><a href="reviews.html" style="text-decoration: none; color: inherit;">Отзывы</a></li>
+    <li><a href="download.html" style="text-decoration: none; color: inherit;">Скачать</a></li>
+    <li><a href="contacts.html" style="text-decoration: none; color: inherit;">Контакты</a></li>
+</ul>
+
+<div class="main-wrapper">
+    <div class="pages-container">
+        <div id="homePage" class="page active-page">
+            <div class="left-aligned-container" id="clickToResetArea">
+                <h1 class="cult-title">КУЛЬТУРИ</h1>
+                <div class="title-stripe"></div>
+                <div class="sub-quote-left">Повысь свой уровень<br>знаний и эрудиции<br>до Олимпа</div>
+                <div class="listen-divider"><hr><span class="listen-text">Послушай</span><hr></div>
+                <div class="cards-container" id="cardsContainer">
+                    <div class="culture-card" data-quote="Культура - это мера человечности в человеке" data-author="Карл Маркс">
+                        <div class="card-img"><img src="images/Маркс.png" alt="Маркс" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2080%20100%22%3E%3Crect%20width%3D%2280%22%20height%3D%22100%22%20fill%3D%22%23997a55%22%2F%3E%3C%2Fsvg%3E'"></div>
+                    </div>
+                    <div class="culture-card" data-quote="Уважение к минувшему — вот черта, отличающая образованность от дикости" data-author="А.С. Пушкин">
+                        <div class="card-img"><img src="images/пушкин.png" alt="Пушкин" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2080%20100%22%3E%3Crect%20width%3D%2280%22%20height%3D%22100%22%20fill%3D%22%23997a55%22%2F%3E%3C%2Fsvg%3E'"></div>
+                    </div>
+                    <div class="culture-card" data-quote="Культура — это не результат обучения в школе, а результат стремления к знаниям на протяжении всей жизни" data-author="Эйнштейн">
+                        <div class="card-img"><img src="images/энштейн.png" alt="Эйнштейн" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2080%20100%22%3E%3Crect%20width%3D%2280%22%20height%3D%22100%22%20fill%3D%22%23997a55%22%2F%3E%3C%2Fsvg%3E'"></div>
+                    </div>
+                </div>
+                <div id="dynamicBlock" class="platform-description">
+                    Культурная платформа нового поколения,<br>
+                    где собраны медиатека, интерактивные карточки,<br>
+                    викторины, чат-обсуждения и афиша мероприятий<br>
+                    с онлайн-покупкой билетов.
+                </div>
+                <a href="services.html" class="btn-next" id="nextButton">Далее</a>
+                <div class="pagination-dots">
+                    <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+                    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="reviewsPage" class="page"><div class="left-aligned-container"><h2 style="font-size: 48px;">Отзывы</h2><p style="margin-top: 20px; font-size: 20px;">«Платформа изменила мой взгляд на культуру!» — Анна. <br>«Удобно, красиво, познавательно» — Дмитрий.</p></div></div>
+        <div id="downloadPage" class="page"><div class="left-aligned-container"><h2 style="font-size: 48px;">Скачать</h2><p style="margin-top: 20px; font-size: 20px;">Мобильное приложение скоро появится в App Store и Google Play. Подпишитесь на уведомления!</p></div></div>
+        <div id="contactsPage" class="page"><div class="left-aligned-container"><h2 style="font-size: 48px;">Контакты</h2><p style="margin-top: 20px; font-size: 20px;">Email: hello@culturi.ru<br>Телефон: +7 (495) 123-45-67<br>Telegram: @culturi_support</p></div></div>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <ul class="footer-nav">
+        <li><a href="download.html">Скачать</a></li>
+        <li><a href="contacts.html">Контакты</a></li>
+    </ul>
+    <div class="footer-socials">
+        <a href="https://vk.com" target="_blank" title="ВК">В</a>
+        <a href="https://youtube.com" target="_blank" title="YouTube">Y</a>
+        <a href="https://yandex.ru" target="_blank" title="Яндекс">Я</a>
+    </div>
+    <div class="footer-copy">© 2026 Культурная платформа</div>
+</footer>
+
+<script>
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    const starCount = 200;
+    function initStars() {
+        stars = [];
+        for (let i = 0; i < starCount; i++) {
+            stars.push({
+                x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+                radius: Math.random() * 2 + 0.8, alpha: Math.random() * 0.5 + 0.2,
+                speedX: (Math.random() - 0.5) * 0.4, speedY: (Math.random() - 0.5) * 0.2 + 0.15,
+                twinkle: Math.random() * 0.05 + 0.01,
+            });
+        }
+    }
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; initStars(); }
+    function drawStars() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#150B0A';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        for (const s of stars) {
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+            const twinkle = 0.6 + 0.4 * Math.sin(Date.now() * 0.002 * s.twinkle * 10);
+            const opacity = Math.min(s.alpha * twinkle, 0.9);
+            ctx.fillStyle = `rgba(255, 235, 190, ${opacity})`;
+            ctx.fill();
+        }
+    }
+    function updateStars() {
+        for (const s of stars) {
+            s.x += s.speedX; s.y += s.speedY;
+            if (s.x < -20) s.x = canvas.width + 20;
+            if (s.x > canvas.width + 20) s.x = -20;
+            if (s.y < -20) s.y = canvas.height + 20;
+            if (s.y > canvas.height + 20) s.y = -20;
+            s.radius = Math.max(0.7, Math.min(2.4, s.radius + (Math.random() - 0.5) * 0.03));
+        }
+    }
+    function animateStars() { updateStars(); drawStars(); requestAnimationFrame(animateStars); }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    animateStars();
+
+    const pages = {
+        home: document.getElementById('homePage'),
+        reviews: document.getElementById('reviewsPage'),
+        download: document.getElementById('downloadPage'),
+        contacts: document.getElementById('contactsPage')
+    };
+    const menuItems = document.querySelectorAll('.menu li[data-page]');
+    function showPage(pageId) {
+        Object.values(pages).forEach(page => page.classList.remove('active-page'));
+        if (pages[pageId]) pages[pageId].classList.add('active-page');
+    }
+    menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const pageId = item.getAttribute('data-page');
+            if (pageId && pages[pageId]) showPage(pageId);
+        });
+    });
+
+    const resetArea = document.getElementById('clickToResetArea');
+    let dynamicBlock = document.getElementById('dynamicBlock');
+    function resetToOriginal() {
+        if (dynamicBlock && dynamicBlock.classList.contains('quote-block')) {
+            const newDiv = document.createElement('div');
+            newDiv.id = 'dynamicBlock';
+            newDiv.className = 'platform-description';
+            newDiv.innerHTML = `Культурная платформа нового поколения,<br>где собраны медиатека, интерактивные карточки,<br>викторины, чат-обсуждения и афиша мероприятий<br>с онлайн-покупкой билетов.`;
+            dynamicBlock.replaceWith(newDiv);
+            dynamicBlock = document.getElementById('dynamicBlock');
+        }
+    }
+    function createQuoteBlock(quoteText, authorName) {
+        const div = document.createElement('div'); div.className = 'quote-block';
+        let formattedQuote = quoteText;
+        if (quoteText.includes("Уважение к минувшему")) formattedQuote = "Уважение к минувшему — вот черта,<br>отличающая образованность от дикости";
+        else if (quoteText.includes("Культура — это не результат")) formattedQuote = "Культура — это не результат обучения<br>в школе, а результат стремления<br>к знаниям на протяжении всей жизни";
+        else if (quoteText.includes("Культура - это мера")) formattedQuote = "Культура - это мера человечности в человеке";
+        div.innerHTML = `<div class="quote-inner"><div class="quote-text">${formattedQuote}</div><div class="quote-stripe"></div><div class="quote-author">${authorName}</div></div>`;
+        return div;
+    }
+    const cards = document.querySelectorAll('.culture-card');
+    cards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const quote = card.getAttribute('data-quote');
+            const author = card.getAttribute('data-author');
+            if (quote && author) {
+                const quoteElement = createQuoteBlock(quote, author);
+                const currentBlock = document.getElementById('dynamicBlock');
+                if (currentBlock) {
+                    currentBlock.replaceWith(quoteElement);
+                    dynamicBlock = document.getElementById('dynamicBlock');
+                    if (!dynamicBlock) { quoteElement.id = 'dynamicBlock'; dynamicBlock = quoteElement; }
+                }
+            }
+        });
+    });
+    resetArea.addEventListener('click', (e) => {
+        if (e.target.closest('.culture-card')) return;
+        if (e.target.closest('.btn-next')) return;
+        if (e.target.closest('.pagination-dots')) return;
+        resetToOriginal();
+    });
+    
+    const dots = document.querySelectorAll('.dot');
+    let activeIndex = 0;
+    dots.forEach((dot, idx) => {
+        dot.addEventListener('click', () => {
+            dots.forEach(d => d.classList.remove('active'));
+            dot.classList.add('active');
+            activeIndex = idx;
+        });
+    });
+    document.querySelector('.left-aligned-container')?.classList.add('fade-up');
+</script>
+</body>
+</html>

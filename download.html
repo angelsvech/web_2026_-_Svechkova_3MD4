@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Скачать | Регистрация</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            background-color: #150B0A;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #F5EFE6;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #stars-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            pointer-events: none;
+            z-index: 0;
+            background-color: #150B0A;
+        }
+
+        .temple-bg {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: auto;
+            height: auto;
+            max-height: 85vh;
+            max-width: calc(100vw - 600px);
+            object-fit: contain;
+            object-position: bottom center;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 1;
+        }
+
+        @media (min-width: 1400px) {
+            .temple-bg { max-width: calc(100vw - 500px); max-height: 88vh; }
+        }
+        @media (min-width: 1200px) and (max-width: 1399px) {
+            .temple-bg { max-width: calc(100vw - 450px); max-height: 85vh; }
+        }
+        @media (min-width: 1000px) and (max-width: 1199px) {
+            .temple-bg { max-width: calc(100vw - 350px); }
+        }
+        @media (min-width: 800px) and (max-width: 999px) {
+            .temple-bg { max-width: calc(100vw - 250px); }
+        }
+        @media (max-width: 799px) {
+            .temple-bg { max-width: 85vw; max-height: 70vh; }
+        }
+
+        .menu {
+            position: fixed;
+            top: 12px;
+            right: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            list-style: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 20px;
+            font-weight: 500;
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            z-index: 100;
+        }
+        .menu li {
+            cursor: pointer;
+            transition: color 0.2s;
+            white-space: nowrap;
+        }
+        .menu li a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .menu li:hover { color: #FFD996; }
+
+        .action-buttons {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            z-index: 101;
+            margin-top: 25vh;
+            margin-bottom: 0;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            display: inline-block;
+            background: #E2D5C2;
+            border: none;
+            border-radius: 10px;
+            padding: 24px 64px;
+            font-family: 'Satyr SP', 'Satyr SP 230', 'Georgia', 'Times New Roman', serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #4A2A1A;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-decoration: none;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+        .action-btn:hover {
+            background: #F5E6D0;
+            transform: translateY(-4px);
+        }
+
+        .spacer {
+            flex-grow: 1;
+            flex-shrink: 1;
+        }
+
+        .page-container {
+            position: relative;
+            z-index: 2;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 30px;
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        .services-content {
+            width: 692px;
+            margin-left: 0;
+            padding-bottom: 38px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-prev {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 2px solid #DDB580;
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #FCE2B4;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-decoration: none;
+            min-width: 48px;
+        }
+        .btn-prev:hover {
+            background: rgba(221, 181, 128, 0.1);
+            border-color: #FFDA9E;
+        }
+
+        .btn-next {
+            display: inline-block;
+            width: fit-content;
+            background: transparent;
+            border: 2px solid #DDB580;
+            border-radius: 10px;
+            padding: 8px 32px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #FCE2B4;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-decoration: none;
+        }
+        .btn-next:hover {
+            background: rgba(221, 181, 128, 0.1);
+            border-color: #FFDA9E;
+        }
+
+        .pagination-dots {
+            display: flex;
+            justify-content: flex-start;
+            gap: 12px;
+            margin-top: 4px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #8B6F50;
+            border-radius: 50%;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active {
+            background-color: #F5CD94;
+            transform: scale(1.2);
+        }
+
+        .right-sidebar {
+            width: 420px;
+            visibility: hidden;
+            pointer-events: none;
+            display: none;
+        }
+
+        .site-footer {
+            position: relative;
+            z-index: 10;
+            background: rgba(21, 11, 10, 0.85);
+            backdrop-filter: blur(6px);
+            border-top: 1px solid #3d2b1f;
+            padding: 20px 40px 18px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #c6b09a;
+            flex-shrink: 0;
+            margin-top: auto;
+            gap: 16px 30px;
+        }
+        .footer-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px 28px;
+            list-style: none;
+        }
+        .footer-nav a {
+            color: #dacbbc;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-weight: 400;
+        }
+        .footer-nav a:hover {
+            color: #FFD996;
+        }
+        .footer-copy {
+            font-size: 13px;
+            color: #8a7a68;
+            letter-spacing: 0.3px;
+        }
+        .footer-socials {
+            display: flex;
+            gap: 14px;
+        }
+        .footer-socials a {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: #2d1e16;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #dacbbc;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .footer-socials a:hover {
+            background: #4d3424;
+            color: #FFD996;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #2A1A16;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            position: relative;
+            border: 1px solid #DDB580;
+            animation: fadeInUp 0.3s ease;
+        }
+        .modal-content h2 {
+            font-family: 'Satyr SP', serif;
+            font-size: 2rem;
+            color: #FCE2B4;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .modal-content input,
+        .modal-content textarea {
+            background: #3A2A20;
+            border: 1px solid #DDB580;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            color: #F5EFE6;
+            outline: none;
+        }
+        .modal-content input:focus,
+        .modal-content textarea:focus {
+            border-color: #FFDA9E;
+            background: #4A3A2E;
+        }
+        .modal-submit {
+            background: #DDB580;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2A1A16;
+            cursor: pointer;
+        }
+        .modal-submit:hover {
+            background: #FFDA9E;
+        }
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #FCE2B4;
+        }
+        .close-modal:hover {
+            color: #FFD996;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1100px) {
+            html, body {
+                overflow: auto;
+            }
+            body {
+                display: block;
+                height: auto;
+                overflow-y: auto;
+            }
+            .spacer {
+                display: none;
+            }
+            .page-container {
+                padding: 20px 20px 40px;
+            }
+            .services-content {
+                width: 100%;
+                padding-bottom: 38px;
+                margin-top: 40px;
+            }
+            .right-sidebar {
+                display: none;
+            }
+            .action-buttons {
+                margin-top: 15vh;
+                margin-bottom: 30px;
+                gap: 30px;
+            }
+            .action-btn {
+                padding: 18px 48px;
+                font-size: 1.8rem;
+            }
+            .pagination-dots {
+                justify-content: center;
+            }
+            .nav-buttons {
+                justify-content: center;
+                width: 100%;
+            }
+            .btn-next {
+                margin-left: 0;
+            }
+            .site-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 16px 20px;
+                gap: 10px;
+            }
+            .footer-nav {
+                gap: 12px 20px;
+            }
+        }
+        @media (max-width: 700px) {
+            .menu {
+                position: relative;
+                top: 0;
+                right: auto;
+                justify-content: flex-end;
+                background: rgba(0,0,0,0.3);
+                border-radius: 40px;
+                padding: 6px 16px;
+                margin-bottom: 20px;
+            }
+            .action-buttons {
+                margin-top: 30px;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .action-btn {
+                padding: 14px 40px;
+                font-size: 1.5rem;
+            }
+            .temple-bg {
+                max-height: 55vh;
+            }
+            .services-content {
+                padding-bottom: 38px;
+            }
+        }
+
+        @font-face {
+            font-family: 'Satyr SP';
+            src: url('font/SatyrSP.otf') format('opentype');
+            font-weight: 800;
+            font-style: normal;
+            font-display: swap;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="stars-canvas"></canvas>
+    <img class="temple-bg" src="images/храм.png" alt="храм" onerror="this.style.display='none'">
+
+    <ul class="menu">
+        <li><a href="index.html">О нас</a></li>
+        <li><a href="services.html">Услуги</a></li>
+        <li><a href="sculptor.html">Скульптор</a></li>
+        <li><a href="reviews.html">Отзывы</a></li>
+        <li>Скачать</li>
+        <li><a href="contacts.html">Контакты</a></li>
+    </ul>
+
+    <div class="action-buttons">
+        <a href="#" class="action-btn" id="downloadBtn">Скачать</a>
+        <a href="#" class="action-btn" id="registerBtn">Регистрация</a>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="page-container">
+        <div class="services-content">
+            <div class="nav-buttons">
+                <a href="reviews.html" class="btn-prev">←</a>
+                <a href="contacts.html" class="btn-next">Далее</a>
+            </div>
+            <div class="pagination-dots" id="paginationDots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot active"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+        <div class="right-sidebar"></div>
+    </div>
+
+    <footer class="site-footer">
+        <ul class="footer-nav">
+            <li><a href="download.html">Скачать</a></li>
+            <li><a href="contacts.html">Контакты</a></li>
+        </ul>
+        <div class="footer-socials">
+            <a href="https://vk.com" target="_blank" title="ВК">В</a>
+            <a href="https://youtube.com" target="_blank" title="YouTube">Y</a>
+            <a href="https://yandex.ru" target="_blank" title="Яндекс">Я</a>
+        </div>
+        <div class="footer-copy">© 2026 Культурная платформа</div>
+    </footer>
+
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modalTitle">Скачать приложение</h2>
+            <form id="modalForm">
+                <input type="text" id="firstName" placeholder="Имя" required>
+                <input type="text" id="lastName" placeholder="Фамилия" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="tel" id="phone" placeholder="Телефон">
+                <textarea id="message" placeholder="Комментарий (необязательно)"></textarea>
+                <button type="submit" class="modal-submit">Отправить</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const canvas = document.getElementById('stars-canvas');
+            const ctx = canvas.getContext('2d');
+            let stars = [];
+            const starCount = 200;
+            let width, height;
+
+            function initStars(w, h) {
+                stars = [];
+                for (let i = 0; i < starCount; i++) {
+                    stars.push({
+                        x: Math.random() * w,
+                        y: Math.random() * h,
+                        radius: Math.random() * 2 + 0.8,
+                        alpha: Math.random() * 0.5 + 0.2,
+                        speedX: (Math.random() - 0.5) * 0.4,
+                        speedY: (Math.random() - 0.5) * 0.2 + 0.15,
+                        twinkle: Math.random() * 0.05 + 0.01,
+                    });
+                }
+            }
+
+            function resizeCanvas() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+                initStars(width, height);
+                drawStars();
+            }
+
+            function drawStars() {
+                if (!ctx) return;
+                ctx.clearRect(0, 0, width, height);
+                ctx.fillStyle = '#150B0A';
+                ctx.fillRect(0, 0, width, height);
+                for (const s of stars) {
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                    const twinkle = 0.6 + 0.4 * Math.sin(Date.now() * 0.002 * s.twinkle * 10);
+                    const opacity = Math.min(s.alpha * twinkle, 0.9);
+                    ctx.fillStyle = `rgba(255, 235, 190, ${opacity})`;
+                    ctx.fill();
+                }
+                requestAnimationFrame(drawStars);
+            }
+
+            function updateStars() {
+                for (const s of stars) {
+                    s.x += s.speedX;
+                    s.y += s.speedY;
+                    if (s.x < -20) s.x = width + 20;
+                    if (s.x > width + 20) s.x = -20;
+                    if (s.y < -20) s.y = height + 20;
+                    if (s.y > height + 20) s.y = -20;
+                    s.radius = Math.max(0.7, Math.min(2.4, s.radius + (Math.random() - 0.5) * 0.03));
+                }
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            setInterval(updateStars, 50);
+        })();
+
+        const dots = document.querySelectorAll('.dot');
+        if (dots.length) {
+            dots.forEach((dot) => {
+                dot.addEventListener('click', () => {
+                    dots.forEach(d => d.classList.remove('active'));
+                    dot.classList.add('active');
+                });
+            });
+        }
+
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalTitle = document.getElementById('modalTitle');
+        const closeModalBtn = document.querySelector('.close-modal');
+        const modalForm = document.getElementById('modalForm');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const registerBtn = document.getElementById('registerBtn');
+
+        function openModal(title) {
+            modalTitle.textContent = title;
+            modalOverlay.classList.add('active');
+            modalForm.reset();
+        }
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+        }
+
+        downloadBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal('Скачать приложение');
+        });
+        registerBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal('Регистрация');
+        });
+        closeModalBtn?.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) closeModal();
+        });
+        modalForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            if (!firstName || !lastName || !email) {
+                alert('Пожалуйста, заполните обязательные поля: Имя, Фамилия, Email');
+                return;
+            }
+            alert(`Спасибо, ${firstName} ${lastName}!\nВаша заявка принята.\nМы свяжемся с вами по email: ${email}`);
+            closeModal();
+        });
+    </script>
+</body>
+</html>
